@@ -1,4 +1,5 @@
 import React from "react";
+import { Routes, Route, Navigate } from 'react-router-dom';
 import logo from "../images/header__logo.svg";
 import Header from "./Header"
 import Footer from "./Footer";
@@ -9,6 +10,7 @@ import api from "../utils/api"
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 import EditAvatarPopup from "./EditAvatarPopup";
 import AddPlacePopup from "./AddPlacePopup";
+import Login from "./Login"
 
 function App() {
 
@@ -18,7 +20,8 @@ function App() {
   const [cards, setCards] = React.useState([]);
   const [selectedCard, setSelectedCard] = React.useState({});
   const [isImagePopupOpen, setImagePopupOpen] = React.useState(false);
-  const [currentUser, setCurrentUser] = React.useState({}); //current user state variable
+  const [currentUser, setCurrentUser] = React.useState({});
+  const [loggedIn, setLoggedIn] = React.useState(false);
   const avatarPhotoRef = React.useRef();
 
   React.useEffect(() => {
@@ -135,7 +138,15 @@ function App() {
       <div className="App root">
         <div className="root__page">
           <Header logo={logo}/>
-          <Main onEditProfile={handleEditProfileClick} onAddPlace={handleAddPlaceClick} onEditAvatar={handleEditAvatarClick} cards={cards} onCardClick={handleCardClick} onLikeClick={handleCardLike} onCardDelete={handleCardDelete}/>
+          <Routes>
+            <Route path="/" element={loggedIn ? <Navigate to="/my-profile" replace /> : <Navigate to="/sign-in" replace />} /> 
+            <Route path="/sign-up" element={<></>} />
+            <Route path="/sign-in" element={<Login/>} />
+            <Route path="/my-profile" element={
+            <Main onEditProfile={handleEditProfileClick} onAddPlace={handleAddPlaceClick}
+             onEditAvatar={handleEditAvatarClick} cards={cards} onCardClick={handleCardClick}
+              onLikeClick={handleCardLike} onCardDelete={handleCardDelete}/>} />
+          </Routes>
           <Footer />
           <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdate={handleUpdateUser} buttonText={"Сохранить"}/>
           <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onSubmit={onAddPlace} buttonText={"Создать"}/>
