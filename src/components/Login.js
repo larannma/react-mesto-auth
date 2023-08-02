@@ -25,7 +25,6 @@ function Login ({handleLogin}) {
     }
     Auth.authorize(formValue.email, formValue.password)
       .then((data) => {
-        console.log(data)
         if (data.token){
           setFormValue({email: '', password: ''});
           handleLogin();
@@ -40,8 +39,8 @@ function Login ({handleLogin}) {
 			<h2 className="login__title">Вход</h2>
 			<form className="login__form">
 				<div className="login__properies">
-					<input onChange={handleChange} value={formValue.email} className="login__text" id="email-input" name="email" placeholder="Email" type="email"></input>
-					<input onChange={handleChange} value={formValue.password} className="login__text" id="password-input" name="password" placeholder="Пароль" type="text"></input>
+					<input onChange={handleChange} value={formValue.email} className="login__text" id="email-input" name="email" placeholder="Email" type="email" required></input>
+					<input onChange={handleChange} value={formValue.password} className="login__text" id="password-input" name="password" placeholder="Пароль" type="text" required></input>
 				</div>
 				<button onClick={handleSubmit} type="submit" className="login__button">Войти</button>
 			</form>

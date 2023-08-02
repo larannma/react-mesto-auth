@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Link, useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import * as Auth from '../Auth.js';
 
 function Register ({handleRegistration}) {
@@ -21,15 +21,12 @@ function Register ({handleRegistration}) {
     e.preventDefault();
     const { email, password } = formValue;
     Auth.register(email, password).then((res) => {
-      console.log(res)
       if (res.status === 201){
         navigate('/sign-in', {replace: true});
         handleRegistration("success");
-        console.log("SUCCESS")
       }
 			else{
         handleRegistration("fail");
-        console.log("FAIL")
       }
 			}
 		);
@@ -40,8 +37,8 @@ function Register ({handleRegistration}) {
 			<h2 className="login__title">Регистрация</h2>
 			<form className="login__form">
 				<div className="login__properies">
-					<input onChange={handleChange} value={formValue.email} className="login__text" id="email-input" name="email" placeholder="Email" type="email"></input>
-					<input onChange={handleChange} value={formValue.password} className="login__text" id="password-input" name="password" placeholder="Пароль" type="text"></input>
+					<input onChange={handleChange} value={formValue.email} className="login__text" id="email-input" name="email" placeholder="Email" type="email" required></input>
+					<input onChange={handleChange} value={formValue.password} className="login__text" id="password-input" name="password" placeholder="Пароль" type="text" required></input>
 				</div>
 				<button onClick={handleSubmit} type="submit" className="login__button">Зарегистрироваться</button>
 			</form>

@@ -38,7 +38,7 @@ function App() {
 
   React.useEffect(() => {
     tokenCheck();
-  }, [])
+  }, [loggedIn])
 
   const tokenCheck = () => {
     const token = localStorage.getItem('token');
@@ -181,7 +181,6 @@ function App() {
       setRegisterStatusImage(failImage);
       setRegisterStatusText("Что-то пошло не так! Попробуйте ещё раз.")
     }
-    console.log(registerStatusImage)
     setRegisterPopupOpen(true);
   }
 
