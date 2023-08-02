@@ -11,12 +11,17 @@ import { CurrentUserContext } from '../contexts/CurrentUserContext';
 import EditAvatarPopup from "./EditAvatarPopup";
 import AddPlacePopup from "./AddPlacePopup";
 import Login from "./Login"
+import Register from "./Register"
+import InfoTooltip from "./InfoTooltip.js"
+import sucessImage from "../images/Success.png"
+import failImage from "../images/Fail.png"
+import ProtectedRouteElement from "./ProtectedRoute.js"
 
 function App() {
-
   const [isEditProfilePopupOpen, setEditProfilePopupOpen] = React.useState(false);
   const [isAddPlacePopupOpen, setAddPlacePopupOpen] = React.useState(false);
   const [isEditAvatarPopupOpen, setEditAvatarPopupOpen] = React.useState(false);
+  const [isRegisterPopupOpen, setRegisterPopupOpen] = React.useState(false);
   const [cards, setCards] = React.useState([]);
   const [selectedCard, setSelectedCard] = React.useState({});
   const [isImagePopupOpen, setImagePopupOpen] = React.useState(false);
@@ -66,6 +71,10 @@ function App() {
     setEditProfilePopupOpen(true);
   }
 
+  // function handleRegisterPopupClick() {
+  //   setRegisterPopupOpen(true);
+  // }
+
   function handleAddPlaceClick() {
     setAddPlacePopupOpen(true);
   }
@@ -75,6 +84,7 @@ function App() {
     setEditProfilePopupOpen(false);
     setEditAvatarPopupOpen(false);
     setImagePopupOpen(false);
+    setRegisterPopupOpen(false);
     setSelectedCard({});
   }
 
@@ -140,14 +150,15 @@ function App() {
           <Header logo={logo}/>
           <Routes>
             <Route path="/" element={loggedIn ? <Navigate to="/my-profile" replace /> : <Navigate to="/sign-in" replace />} /> 
-            <Route path="/sign-up" element={<></>} />
+            <Route path="/sign-up" element={<Register/>} />
             <Route path="/sign-in" element={<Login/>} />
-            <Route path="/my-profile" element={
-            <Main onEditProfile={handleEditProfileClick} onAddPlace={handleAddPlaceClick}
-             onEditAvatar={handleEditAvatarClick} cards={cards} onCardClick={handleCardClick}
-              onLikeClick={handleCardLike} onCardDelete={handleCardDelete}/>} />
+            <Route path="/my-profile" element={<ProtectedRouteElement element={
+              Main} loggedIn={loggedIn} onEditProfile={handleEditProfileClick} onAddPlace={handleAddPlaceClick}
+              onEditAvatar={handleEditAvatarClick} cards={cards} onCardClick={handleCardClick}
+              onLikeClick={handleCardLike} onCardDelete={handleCardDelete}/>}/>
           </Routes>
           <Footer />
+          <InfoTooltip onClose={closeAllPopups} isOpen={isRegisterPopupOpen} image={failImage} text={"Что-то пошло не так! Попробуйте ещё раз."}/>
           <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdate={handleUpdateUser} buttonText={"Сохранить"}/>
           <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onSubmit={onAddPlace} buttonText={"Создать"}/>
           <ImagePopup onClose={closeAllPopups} isOpen={isImagePopupOpen} card={selectedCard}/>

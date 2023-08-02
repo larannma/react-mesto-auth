@@ -1,0 +1,7 @@
+.header__direction{
+  text-align: center;
+  display: flex;
+  align-self: flex-end;
+  color: #ffffff;
+  text-decoration: none;
+}
