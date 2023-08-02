@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import logo from "../images/header__logo.svg";
 import Header from "./Header"
 import Footer from "./Footer";
@@ -16,6 +16,7 @@ import InfoTooltip from "./InfoTooltip.js"
 import sucessImage from "../images/Success.png"
 import failImage from "../images/Fail.png"
 import ProtectedRouteElement from "./ProtectedRoute.js"
+import * as Auth from '../Auth.js';
 
 function App() {
   const [isEditProfilePopupOpen, setEditProfilePopupOpen] = React.useState(false);
@@ -27,7 +28,32 @@ function App() {
   const [isImagePopupOpen, setImagePopupOpen] = React.useState(false);
   const [currentUser, setCurrentUser] = React.useState({});
   const [loggedIn, setLoggedIn] = React.useState(false);
+  const [userData, setUserData] = React.useState({});
+  const [registerStatusImage, setRegisterStatusImage] = React.useState(sucessImage);
+  const [registerStatusText, setRegisterStatusText] = React.useState("");
+
   const avatarPhotoRef = React.useRef();
+
+  const navigate = useNavigate();
+
+  React.useEffect(() => {
+    tokenCheck();
+  }, [])
+
+  const tokenCheck = () => {
+    const token = localStorage.getItem('token');
+    if (token){
+          Auth.getContent(token).then((res) => {
+          if (res){
+            setUserData({
+              email: res.data.email
+            });
+            setLoggedIn(true);
+            navigate("/my-profile", {replace: true})
+          }
+        });
+    }
+  } 
 
   React.useEffect(() => {
     api.getUserInfo().then((res) => {
@@ -70,10 +96,6 @@ function App() {
   function handleEditProfileClick() {
     setEditProfilePopupOpen(true);
   }
-
-  // function handleRegisterPopupClick() {
-  //   setRegisterPopupOpen(true);
-  // }
 
   function handleAddPlaceClick() {
     setAddPlacePopupOpen(true);
@@ -143,22 +165,42 @@ function App() {
     }));
   }
 
+  const handleLogin = () => {
+    setLoggedIn(true);
+  }
+
+  const handleExit = () => {
+    setLoggedIn(false);
+  }
+
+  const handleRegistration = (imageStatus) => {
+    if (imageStatus === "success"){
+      setRegisterStatusImage(sucessImage);
+      setRegisterStatusText("Вы успешно зарегистрировались!")
+    }else{
+      setRegisterStatusImage(failImage);
+      setRegisterStatusText("Что-то пошло не так! Попробуйте ещё раз.")
+    }
+    console.log(registerStatusImage)
+    setRegisterPopupOpen(true);
+  }
+
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="App root">
         <div className="root__page">
-          <Header logo={logo}/>
+          <Header logo={logo} userEmail={userData.email} loggedIn={loggedIn} handleExit={handleExit}/>
           <Routes>
             <Route path="/" element={loggedIn ? <Navigate to="/my-profile" replace /> : <Navigate to="/sign-in" replace />} /> 
-            <Route path="/sign-up" element={<Register/>} />
-            <Route path="/sign-in" element={<Login/>} />
+            <Route path="/sign-up" element={<Register handleRegistration={handleRegistration}/>} />
+            <Route path="/sign-in" element={<Login handleLogin={handleLogin}/>} />
             <Route path="/my-profile" element={<ProtectedRouteElement element={
               Main} loggedIn={loggedIn} onEditProfile={handleEditProfileClick} onAddPlace={handleAddPlaceClick}
               onEditAvatar={handleEditAvatarClick} cards={cards} onCardClick={handleCardClick}
               onLikeClick={handleCardLike} onCardDelete={handleCardDelete}/>}/>
           </Routes>
           <Footer />
-          <InfoTooltip onClose={closeAllPopups} isOpen={isRegisterPopupOpen} image={failImage} text={"Что-то пошло не так! Попробуйте ещё раз."}/>
+          <InfoTooltip onClose={closeAllPopups} isOpen={isRegisterPopupOpen} image={registerStatusImage} text={registerStatusText}/>
           <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdate={handleUpdateUser} buttonText={"Сохранить"}/>
           <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onSubmit={onAddPlace} buttonText={"Создать"}/>
           <ImagePopup onClose={closeAllPopups} isOpen={isImagePopupOpen} card={selectedCard}/>

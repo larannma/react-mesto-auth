@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {Link, useNavigate} from 'react-router-dom';
 import * as Auth from '../Auth.js';
 
-function Register () {
+function Register ({handleRegistration}) {
 	const [formValue, setFormValue] = useState({
     email: '',
     password: '',
@@ -21,7 +21,16 @@ function Register () {
     e.preventDefault();
     const { email, password } = formValue;
     Auth.register(email, password).then((res) => {
-			navigate('/sign-in', {replace: true});
+      console.log(res)
+      if (res.status === 201){
+        navigate('/sign-in', {replace: true});
+        handleRegistration("success");
+        console.log("SUCCESS")
+      }
+			else{
+        handleRegistration("fail");
+        console.log("FAIL")
+      }
 			}
 		);
   }
