@@ -10,7 +10,7 @@ function Main ({onEditProfile, onAddPlace, onEditAvatar, cards, onCardClick, onL
       <section className="profile root__section">
         <div className="profile__base">
           <div type="button" className="profile__overlay-container" onClick={onEditAvatar}>
-            <img src={сurrentUser.avatar} alt={CurrentUserContext.avatar} className="profile__avatar"/>
+            <img src={сurrentUser.avatar} alt={сurrentUser.name} className="profile__avatar"/>
           </div>
           <div className="profile__info">
             <div className="profile__extra-info">

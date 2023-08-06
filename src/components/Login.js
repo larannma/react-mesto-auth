@@ -1,4 +1,4 @@
-import * as Auth from '../Auth.js';
+import * as Auth from '../utils/Auth.js';
 import React, {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 
@@ -37,12 +37,12 @@ function Login ({handleLogin}) {
 	return (
 		<section className="login root_section">
 			<h2 className="login__title">Вход</h2>
-			<form className="login__form">
+			<form onSubmit={handleSubmit} className="login__form">
 				<div className="login__properies">
 					<input onChange={handleChange} value={formValue.email} className="login__text" id="email-input" name="email" placeholder="Email" type="email" required></input>
 					<input onChange={handleChange} value={formValue.password} className="login__text" id="password-input" name="password" placeholder="Пароль" type="text" required></input>
 				</div>
-				<button onClick={handleSubmit} type="submit" className="login__button">Войти</button>
+				<button type="submit" className="login__button">Войти</button>
 			</form>
     </section>
     )

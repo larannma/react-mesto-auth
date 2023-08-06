@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
-import { useNavigate } from 'react-router-dom';
-import * as Auth from '../Auth.js';
+import { Link, useNavigate } from 'react-router-dom';
+import * as Auth from '../utils/Auth.js';
 
 function Register ({handleRegistration}) {
 	const [formValue, setFormValue] = useState({
@@ -21,28 +21,25 @@ function Register ({handleRegistration}) {
     e.preventDefault();
     const { email, password } = formValue;
     Auth.register(email, password).then((res) => {
-      if (res.status === 201){
-        navigate('/sign-in', {replace: true});
-        handleRegistration("success");
-      }
-			else{
-        handleRegistration("fail");
-      }
+      navigate('/sign-in', {replace: true});
+      handleRegistration("success");
 			}
-		);
+		).catch(()=> {
+      handleRegistration("fail");
+    });
   }
 
 	return (
 		<section className="login root_section">
 			<h2 className="login__title">Регистрация</h2>
-			<form className="login__form">
+			<form className="login__form" onSubmit={handleSubmit}>
 				<div className="login__properies">
 					<input onChange={handleChange} value={formValue.email} className="login__text" id="email-input" name="email" placeholder="Email" type="email" required></input>
 					<input onChange={handleChange} value={formValue.password} className="login__text" id="password-input" name="password" placeholder="Пароль" type="text" required></input>
 				</div>
-				<button onClick={handleSubmit} type="submit" className="login__button">Зарегистрироваться</button>
+				<button type="submit" className="login__button">Зарегистрироваться</button>
 			</form>
-      <span className="login__subtitle">Уже зарегистрированы? <a href="/" className="login__link">Войти</a></span>
+      <span className="login__subtitle">Уже зарегистрированы? <Link to="/sign-in" className='login__link'>Войти</Link></span>
     </section>
     )
 }

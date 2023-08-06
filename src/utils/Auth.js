@@ -1,6 +1,12 @@
-// duckAuth.js
-
 export const BASE_URL = 'https://auth.nomoreparties.co';
+
+const _handleResponse = (res) => {
+  if (res.ok){
+    return res.json()
+  } else {
+    return Promise.reject(`Ошибка ${res.status}`)
+  }
+}
 
 export const register = (email, password) => {
   return fetch(`${BASE_URL}/signup`, {
@@ -11,6 +17,7 @@ export const register = (email, password) => {
     },
     body: JSON.stringify({email, password})
   })
+  .then(_handleResponse);
 };
 
 export const authorize = (email, password) => {
@@ -22,14 +29,13 @@ export const authorize = (email, password) => {
     },
     body: JSON.stringify({email, password})
   })
-  .then((response => response.json()))
+  .then(_handleResponse)
   .then((data) => {
     if (data.token){
       localStorage.setItem('token', data.token);
       return data;
     }
-  })
-  .catch(err => console.log(err))
+  });
 };
 
 export const getContent = (token) => {
@@ -41,6 +47,6 @@ export const getContent = (token) => {
       'Authorization': `Bearer ${token}`,
     }
   })
-  .then(res => res.json())
+  .then(_handleResponse)
   .then(data => data)
 }

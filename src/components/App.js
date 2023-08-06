@@ -16,7 +16,7 @@ import InfoTooltip from "./InfoTooltip.js"
 import sucessImage from "../images/Success.png"
 import failImage from "../images/Fail.png"
 import ProtectedRouteElement from "./ProtectedRoute.js"
-import * as Auth from '../Auth.js';
+import * as Auth from '../utils/Auth.js';
 
 function App() {
   const [isEditProfilePopupOpen, setEditProfilePopupOpen] = React.useState(false);
@@ -51,19 +51,13 @@ function App() {
             setLoggedIn(true);
             navigate("/my-profile", {replace: true})
           }
-        });
+        }).catch(error => console.log(error.message));
     }
   } 
 
   React.useEffect(() => {
     api.getUserInfo().then((res) => {
-      const userInfoApi = {
-        name: res.name,
-        about: res.about,
-        _id: res._id,
-        avatar: res.avatar
-      }
-      setCurrentUser(userInfoApi);
+      setCurrentUser(res);
     }).catch((err => {
       console.log(err)
     }));
@@ -71,14 +65,7 @@ function App() {
 
   React.useEffect(() => {
     api.getCards().then((res) => {
-      const cardsApi = res.map((item) => ({
-        name: item.name,
-        link: item.link,
-        likes: item.likes,
-        _id: item._id,
-        owner: item.owner
-      }));
-      setCards(cardsApi);
+      setCards(res);
     }).catch((err => {
       console.log(err)
     }));
@@ -109,6 +96,23 @@ function App() {
     setRegisterPopupOpen(false);
     setSelectedCard({});
   }
+
+  const isOpen = isEditAvatarPopupOpen || isEditProfilePopupOpen || isAddPlacePopupOpen || isImagePopupOpen
+
+  React.useEffect(() => {
+    function closeByEscape(evt) {
+      if(evt.key === 'Escape') {
+        closeAllPopups();
+      }
+    }
+    if(isOpen) { // навешиваем только при открытии
+      document.addEventListener('keydown', closeByEscape);
+      return () => {
+        document.removeEventListener('keydown', closeByEscape);
+      }
+    }
+  }, [isOpen]) 
+
 
   function handleCardLike(card) {
       const isLiked = card.likes.some(i => (
